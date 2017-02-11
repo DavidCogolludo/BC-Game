@@ -66,10 +66,10 @@ function Chapa (game ,img, x, y){
 
        } 
    }
-       if(this.body.velocity.x<0)this.body.velocity.x+=2;
-       else if(this.body.velocity.x>0) this.body.velocity.x-=2;
-        if(this.body.velocity.y<0)this.body.velocity.y+=2;
-       else if(this.body.velocity.y>0) this.body.velocity.y-=2;
+       if(Math.round(this.body.velocity.x)<0)this.body.velocity.x+=2;
+       else if(Math.round(this.body.velocity.x)>0) this.body.velocity.x-=2;
+        if(Math.round(this.body.velocity.y)<0)this.body.velocity.y+=2;
+       else if(Math.round(this.body.velocity.y)>0) this.body.velocity.y-=2;
      };
 
      return this.chapa;
