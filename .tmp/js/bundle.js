@@ -3,8 +3,8 @@
 function Chapa (game ,img, x, y){
 	//this.chapa = this.game.add.sprite(400, 400, 'chapa');
 	this.chapa = game.add.sprite(x, y, img);
-    /*this.chapa.anchor.x = 0.5;
-    this.chapa.anchor.y = 0.5;*/
+    this.chapa.anchor.x = 0.5;
+    this.chapa.anchor.y = 0.5;
     this.chapa.body
     this.chapa.flecha = game.add.sprite(x,y,'flecha');
     this.chapa.flecha.visible = false;
@@ -17,6 +17,7 @@ function Chapa (game ,img, x, y){
     this.chapa.events.onInputDown.add(function(){self.chapa.bar.visible = true;  this.chapa.flecha.visible = true; this.clic = false;}, this);
     
     this.chapa.bar = game.add.sprite(x, y, 'powerBar');
+    this.chapa.bar.anchor.setTo(0.5);
     this.chapa.bar.visible = false;
     this.chapa.bar.animations.add('p');
     this.chapa.bar.animations.play('p', 20,true);
@@ -35,19 +36,19 @@ function Chapa (game ,img, x, y){
     		incr*=-1;
     	}
     }
-     console.log('pop');
-     game.physics.startSystem(Phaser.Physics.P2JS);
-    game.physics.p2.defaultRestitution = 0.8;
-    game.physics.p2.enable(this.chapa);
+    //game.physics.startSystem(Phaser.Physics.P2JS);
+    //game.physics.p2.defaultRestitution = 0.8;
+   game.physics.arcade.enable(this.chapa);
 
-    console.log('pop');
-    this.chapa.body.setCircle(17);
+    this.chapa.body.setCircle(25);
     this.chapa.body.collideWorldBounds = true;
     this.chapa.body.bounce.setTo(0.9, 0.9);
 
      this.chapa.act = function(){
      	    //game.debug.body(this);
-     	this.bar.position = this.position;
+     	//this.bar.position = this.position;
+      this.bar.position.x = this.position.x;
+      this.bar.position.y = this.position.y +50;
      	this.flecha.position = this.position;
      	if(this.flecha.visible){
      	 this.flecha.rotation = game.physics.arcade.angleToPointer(this.flecha);
@@ -164,9 +165,18 @@ var PreloaderScene = {
        //this.game.load.tilemap('tilemap', 'images/map.json', null, Phaser.Tilemap.TILED_JSON);
        //this.game.load.image('tiles', 'images/simples_pimples.png');
        this.game.load.image('chapa', 'images/chapa.png');
+       this.game.load.image('chapa2', 'images/chapa1.png');
        this.game.load.image('flecha', 'images/arrow.png');
+       this.game.load.image('balon', 'images/balon.png');
+       this.game.load.image('palo', 'images/palo.png');
+        this.game.load.image('larguero', 'images/largero.png');
+       this.game.load.image('red', 'images/red.png');
+       this.game.load.image('portero', 'images/portero.png');
+        this.game.load.image('portero2', 'images/portero2.png');
        this.game.load.image('BG', 'images/Campo.png');
+       this.game.load.image('marcador', 'images/marcador.png');
        this.game.load.spritesheet('powerBar', 'images/power.png', 180, 30, 32);
+       this.game.load.spritesheet('balonS', 'images/balon2.png', 35, 35, 7);
        //this.game.load.atlasJSONHash('rush_idle01', 'images/rush_spritesheet.png', 'images/rush_spritesheet.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
        
       //TODO 2.2a Escuchar el evento onLoadComplete con el método loadComplete que el state 'play'
@@ -212,7 +222,7 @@ window.onload = function () {
 };
 
 function init (){
-  var game = new Phaser.Game(1000, 600, Phaser.AUTO, 'game');
+  var game = new Phaser.Game(1000, 700, Phaser.AUTO, 'game');
 
 //TODO 1.2 Añadir los states 'boot' BootScene, 'menu' MenuScene, 'preloader' PreloaderScene, 'play' PlayScene, 'gameOver' GameOver.
  game.state.add('boot', BootScene);
@@ -229,11 +239,11 @@ var MenuScene = {
     create: function () {
         
         var logo = this.game.add.sprite(this.game.world.centerX, 
-                                        this.game.world.centerY, 
+                                        this.game.world.centerY-50, 
                                         'logo');
         logo.anchor.setTo(0.5, 0.5);
         var buttonStart = this.game.add.button(this.game.world.centerX, 
-                                               this.game.world.centerY, 
+                                               this.game.world.centerY+280, 
                                                'button', 
                                                this.actionOnClick, 
                                                this, 2, 1, 0);
@@ -268,17 +278,93 @@ var PlayScene = {
     _playerState: PlayerState.STOP, //estado del player
     _direction: Direction.NONE,  //dirección inicial del player. NONE es ninguna dirección.
 
+init : function(golesC, golesBc){
+ this.golesBC = golesBc || 0;
+      this.golesC = golesC || 0;
+},
     //Método constructor...
   create: function () {
       //Creamos al player con un sprite por defecto.
       //TODO 5 Creamos a rush 'rush'  con el sprite por defecto en el 10, 10 con la animación por defecto 'rush_idle01'
-       var BG = this.game.add.sprite(0, 
-                                      0, 
-                                      'BG');
+       var BG = this.game.add.sprite(0,0,'BG');
+       var marcador = this.game.add.sprite(0, 600, 'marcador');
+       this.scored = false;
+       //--------------CANVAS-----------------------------
+     
+      this.marcadorBC = this.game.add.text(325, 615, this.golesBC, { font: "65px Arial", fill: "#ffffff", align: "center" });
+      this.marcadorC = this.game.add.text(625, 615, this.golesC, { font: "65px Arial", fill: "#ffffff", align: "center" });
+
+
         this.game.world.setBounds(0, 0, 1000, 600);
-      this.chapa = new entities.Chapa(this.game, 'chapa',400,400);
-      this.chapa2 = new entities.Chapa(this.game, 'chapa',200,200);
-      this.game.physics.startSystem(Phaser.Physics.ARCADE);
+         this.balon = this.game.add.sprite( 500, 300, 'balonS');
+         this.balon.anchor.setTo(0.5);
+         this.balon.scale.setTo(0.8);
+          this.balon.animations.add('p');
+
+    this.bayernCu = this.game.add.group();
+    this.bc = [];
+    this.bc.push(new entities.Chapa(this.game, 'portero',100,300));
+    this.bc.push(new entities.Chapa(this.game, 'chapa',225,450));
+    this.bc.push(new entities.Chapa(this.game, 'chapa',225,150));
+    this.bc.push(new entities.Chapa(this.game, 'chapa',300,300));
+     this.bc.push(new entities.Chapa(this.game, 'chapa',370,50));
+     this.bc.push(new entities.Chapa(this.game, 'chapa',370,550));
+     this.bc.push(new entities.Chapa(this.game, 'chapa',450,300));
+     ///----------------------------rivales---------------------------------------------
+    this.bc.push(new entities.Chapa(this.game, 'portero2',900,300));
+    this.bc.push(new entities.Chapa(this.game, 'chapa2',775,450));
+    this.bc.push(new entities.Chapa(this.game, 'chapa2',775,150));
+    this.bc.push(new entities.Chapa(this.game, 'chapa2',700,300));
+    this.bc.push(new entities.Chapa(this.game, 'chapa2',625,50));
+    this.bc.push(new entities.Chapa(this.game, 'chapa2',625,550));
+    this.bc.push(new entities.Chapa(this.game, 'chapa2',550,300));
+    for (var i = 0; i < this.bc.length; i++){
+      this.bayernCu.add(this.bc[i]);
+    }
+
+    this.porterias = this.game.add.group();
+
+    this.porterias.enableBody = true;
+    this.porterias.physicsBodyType = Phaser.Physics.ARCADE;
+    //this.porterias.physicsBodyType = Phaser.Physics.ARCADE;
+    this.port = [];
+     var aux = this.game.add.sprite(44, 300, 'larguero');
+    aux.anchor.setTo(0.5);
+    aux.scale.x=0.8;
+    aux.scale.y = 0.9;
+   
+    this.port.push(this.game.add.sprite(36,377, 'palo'));
+    this.port.push(this.game.add.sprite(36,205, 'palo'));
+    this.port.push(aux);
+
+    aux = this.game.add.sprite(954, 300, 'larguero');
+    aux.anchor.setTo(0.5);
+    aux.scale.x =-0.8;
+    aux.scale.y = 0.9;
+    this.port.push(this.game.add.sprite(875,377, 'palo'));
+    this.port.push(this.game.add.sprite(875,205, 'palo'));
+    this.port.push(aux);
+
+    for (var i = 0; i < this.port.length; i++){
+      this.porterias.add(this.port[i]);
+    }
+    this.porterias.forEach(function(obj){
+        obj.body.immovable = true;
+    })
+    //-------Red--------------
+    this.redBC = this.game.add.sprite(80,300, 'red');
+    this.redBC.anchor.setTo(0.5);
+    this.redC = this.game.add.sprite(920,300, 'red');
+    this.redC.anchor.setTo(0.5);
+    
+
+    this.game.physics.startSystem(Phaser.Physics.ARCADE);
+    this.game.physics.arcade.enable(this.balon);
+    this.balon.body.setCircle(17.5);
+    this.balon.body.collideWorldBounds = true;
+    this.balon.body.bounce.setTo(0.9, 0.9);
+
+
      
       //this.configure();
   },
@@ -292,9 +378,44 @@ var PlayScene = {
     },
     //IS called one per frame.
     update: function () {
-       this.game.physics.arcade.collide(this.chapa, this.chapa2);
-       this.chapa.act();    
-        this.chapa2.act();   
+        var self = this;
+
+        this.marcadorBC.setText(this.golesBC);
+        this.marcadorC.setText(this.golesC);
+
+
+        this.bayernCu.forEach(function(obj){
+          self.game.physics.arcade.collide(obj, self.bayernCu);
+          self.game.physics.arcade.collide(obj, self.porterias);
+        })
+        this.bayernCu.forEach(function(obj){
+          if(self.game.physics.arcade.collide(obj, self.balon)) self.balon.animations.play('p', 20,true);
+        })
+        this.porterias.forEach(function(obj){
+             //self.game.debug.body(obj);
+          self.game.physics.arcade.collide(obj, self.balon);
+        })
+      
+       this.bayernCu.forEach(function(obj){
+        obj.act();
+       })  
+        if(this.balon.body.velocity.x<0)this.balon.body.velocity.x+=0.5;
+       else if(this.balon.body.velocity.x>0) this.balon.body.velocity.x-=0.5;
+        if(this.balon.body.velocity.y<0)this.balon.body.velocity.y+=0.5;
+       else if(this.balon.body.velocity.y>0) this.balon.body.velocity.y-=0.5;
+    
+       if(Math.round(this.balon.body.velocity.x) === 0 && Math.round(this.balon.body.velocity.y) === 0) this.balon.animations.stop();
+       else this.balon.animations.currentAnim.speed -=0.1;
+
+       if(this.balon.overlap(this.redBC) && !this.scored){
+        this.scored = true;
+        setTimeout(function(){self.golesC++; self.scored = false;self.game.state.restart(true, false, self.golesC,self.golesBC);}, 2000);
+       } 
+
+       if(this.balon.overlap(this.redC) && !this.scored){
+        this.scored = true;
+        setTimeout(function(){self.golesBC++; self.scored = false;self.game.state.restart(true, false, self.golesC,self.golesBC);}, 2000);
+       }
       //if (this.game.input.activePointer.isDown)this.set();
        /* var moveDirection = new Phaser.Point(0, 0);
         var collisionWithTilemap = this.game.physics.arcade.collide(this._rush, this.groundLayer);

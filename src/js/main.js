@@ -41,9 +41,18 @@ var PreloaderScene = {
        //this.game.load.tilemap('tilemap', 'images/map.json', null, Phaser.Tilemap.TILED_JSON);
        //this.game.load.image('tiles', 'images/simples_pimples.png');
        this.game.load.image('chapa', 'images/chapa.png');
+       this.game.load.image('chapa2', 'images/chapa1.png');
        this.game.load.image('flecha', 'images/arrow.png');
+       this.game.load.image('balon', 'images/balon.png');
+       this.game.load.image('palo', 'images/palo.png');
+        this.game.load.image('larguero', 'images/largero.png');
+       this.game.load.image('red', 'images/red.png');
+       this.game.load.image('portero', 'images/portero.png');
+        this.game.load.image('portero2', 'images/portero2.png');
        this.game.load.image('BG', 'images/Campo.png');
+       this.game.load.image('marcador', 'images/marcador.png');
        this.game.load.spritesheet('powerBar', 'images/power.png', 180, 30, 32);
+       this.game.load.spritesheet('balonS', 'images/balon2.png', 35, 35, 7);
        //this.game.load.atlasJSONHash('rush_idle01', 'images/rush_spritesheet.png', 'images/rush_spritesheet.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
        
       //TODO 2.2a Escuchar el evento onLoadComplete con el método loadComplete que el state 'play'
@@ -89,7 +98,7 @@ window.onload = function () {
 };
 
 function init (){
-  var game = new Phaser.Game(1000, 600, Phaser.AUTO, 'game');
+  var game = new Phaser.Game(1000, 700, Phaser.AUTO, 'game');
 
 //TODO 1.2 Añadir los states 'boot' BootScene, 'menu' MenuScene, 'preloader' PreloaderScene, 'play' PlayScene, 'gameOver' GameOver.
  game.state.add('boot', BootScene);

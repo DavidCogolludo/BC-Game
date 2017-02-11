@@ -2,8 +2,8 @@
 function Chapa (game ,img, x, y){
 	//this.chapa = this.game.add.sprite(400, 400, 'chapa');
 	this.chapa = game.add.sprite(x, y, img);
-    /*this.chapa.anchor.x = 0.5;
-    this.chapa.anchor.y = 0.5;*/
+    this.chapa.anchor.x = 0.5;
+    this.chapa.anchor.y = 0.5;
     this.chapa.body
     this.chapa.flecha = game.add.sprite(x,y,'flecha');
     this.chapa.flecha.visible = false;
@@ -16,6 +16,7 @@ function Chapa (game ,img, x, y){
     this.chapa.events.onInputDown.add(function(){self.chapa.bar.visible = true;  this.chapa.flecha.visible = true; this.clic = false;}, this);
     
     this.chapa.bar = game.add.sprite(x, y, 'powerBar');
+    this.chapa.bar.anchor.setTo(0.5);
     this.chapa.bar.visible = false;
     this.chapa.bar.animations.add('p');
     this.chapa.bar.animations.play('p', 20,true);
@@ -34,19 +35,19 @@ function Chapa (game ,img, x, y){
     		incr*=-1;
     	}
     }
-     console.log('pop');
-     game.physics.startSystem(Phaser.Physics.P2JS);
-    game.physics.p2.defaultRestitution = 0.8;
-    game.physics.p2.enable(this.chapa);
+    //game.physics.startSystem(Phaser.Physics.P2JS);
+    //game.physics.p2.defaultRestitution = 0.8;
+   game.physics.arcade.enable(this.chapa);
 
-    console.log('pop');
-    this.chapa.body.setCircle(17);
+    this.chapa.body.setCircle(25);
     this.chapa.body.collideWorldBounds = true;
     this.chapa.body.bounce.setTo(0.9, 0.9);
 
      this.chapa.act = function(){
      	    //game.debug.body(this);
-     	this.bar.position = this.position;
+     	//this.bar.position = this.position;
+      this.bar.position.x = this.position.x;
+      this.bar.position.y = this.position.y +50;
      	this.flecha.position = this.position;
      	if(this.flecha.visible){
      	 this.flecha.rotation = game.physics.arcade.angleToPointer(this.flecha);
